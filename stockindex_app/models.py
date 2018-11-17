@@ -4,37 +4,34 @@ from django.urls import reverse
 
 class Stock(models.Model):
     """A single publicly traded stock"""
-    market = models.CharField(max_length=10)
     symbol = models.CharField(max_length=20)
-    marketsymbol = models.CharField(max_length=32)
     company = models.CharField(max_length=100, blank=True)
     shares_outstanding = models.IntegerField()
     current_price = models.DecimalField(decimal_places=2, max_digits=10)
-    prior_price = models.DecimalField(decimal_places=2, max_digits=10)
+    prior_close_price = models.DecimalField(decimal_places=2, max_digits=10)
     change_price = models.DecimalField(decimal_places=2, max_digits=10)
+    high_price = models.DecimalField(decimal_places=2, max_digits=10)
+    low_price = models.DecimalField(decimal_places=2, max_digits=10)
     high_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10)
     low_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10)
-    current_mktcap = models.DecimalField(decimal_places=2, max_digits=20)
-    prior_mktcap = models.DecimalField(decimal_places=2, max_digits=20)
-    change_mktcap = models.DecimalField(decimal_places=2, max_digits=20)
-    high_mktcap_52_weeks = models.DecimalField(decimal_places=2, max_digits=20)
-    low_mktcap_52_weeks = models.DecimalField(decimal_places=2, max_digits=20)
+    market_cap = models.DecimalField(decimal_places=2, max_digits=20)
     logo = models.ImageField(upload_to='')
     inactive = models.BooleanField(default=False)
 
     def __str__(self):
-        return ''.join([self.marketsymbol, ' ', self.company])
+        return self.symbol
 
 
 class Observations(models.Model):
     """Daily statistics about how a stock is trading"""
     stock_id = models.ForeignKey('Stock', on_delete=models.CASCADE)
-    observation_date = models.DateField()
+    observation_date = models.DateTimeField()
+    shares_outstanding = models.IntegerField()
+    volume = models.IntegerField()
     open_price = models.DecimalField(decimal_places=2, max_digits=10)
     high_price = models.DecimalField(decimal_places=2, max_digits=10)
     low_price = models.DecimalField(decimal_places=2, max_digits=10)
     close_price = models.DecimalField(decimal_places=2, max_digits=10)
-    volume = models.IntegerField()
 
 
 class Index(models.Model):
@@ -42,7 +39,7 @@ class Index(models.Model):
     name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10)
     current_value = models.DecimalField(decimal_places=2, max_digits=10)
-    prior_value = models.DecimalField(decimal_places=2, max_digits=10)
+    prior_close_value = models.DecimalField(decimal_places=2, max_digits=10)
     change_value = models.DecimalField(decimal_places=2, max_digits=10)
     high_value = models.DecimalField(decimal_places=2, max_digits=10)
     low_value = models.DecimalField(decimal_places=2, max_digits=10)
