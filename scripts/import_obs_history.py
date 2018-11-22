@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import pandas as pd
 import requests
@@ -11,15 +12,14 @@ filename_db = 'db.sqlite3'
 path_db = directory_db + '\\' + filename_db
 con = sqlite3.connect(path_db)
 
-# get the list of stock symbols to lookup
-sql_query = 'SELECT marketsymbol, id FROM stockindex_app_stock'
-df = pd.read_sql(sql_query, con)
-marketsymbol_list = df['marketsymbol'].tolist()
-id_list = df['id'].tolist()
-symbol_dict = {}
-for n in range(0, len(marketsymbol_list)):
-    symbol_dict[marketsymbol_list[n]] = id_list[n]
+with open('obs_history.json', 'r') as f:
+    df = pd.read_json(f.read()).T.sort_index(ascending=True)
+    #data = json.loads(f.read())
 
+#df = pd.read_json(data)
+
+print(df.head())
+"""
 # define alpha vantage API parameters
 alpha_function = 'TIME_SERIES_DAILY'
 alpha_apikey = 'VWXATT8K62KW1GZH'
@@ -56,7 +56,7 @@ for current_symbol in list(symbol_dict.keys()):
 
 
 
-"""
+
 # path to text file for output
 directory_output = os.getcwd()
 filename_output = 'windex.txt'
