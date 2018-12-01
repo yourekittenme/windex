@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import pandas as pd
 import requests
@@ -11,15 +12,14 @@ filename_db = 'db.sqlite3'
 path_db = directory_db + '\\' + filename_db
 con = sqlite3.connect(path_db)
 
-# get the list of stock symbols to lookup
-sql_query = 'SELECT marketsymbol, id FROM stockindex_app_stock'
-df = pd.read_sql(sql_query, con)
-marketsymbol_list = df['marketsymbol'].tolist()
-id_list = df['id'].tolist()
-symbol_dict = {}
-for n in range(0, len(marketsymbol_list)):
-    symbol_dict[marketsymbol_list[n]] = id_list[n]
+with open('obs_history.json', 'r') as f:
+    df = pd.read_json(f.read()).T.sort_index(ascending=True)
+    #data = json.loads(f.read())
 
+#df = pd.read_json(data)
+
+print(df.head())
+"""
 # define alpha vantage API parameters
 alpha_function = 'TIME_SERIES_DAILY'
 alpha_apikey = 'VWXATT8K62KW1GZH'
@@ -30,33 +30,33 @@ observation_date = (datetime.datetime.now() + datetime.timedelta(days=-1)).strft
 dict_level_1 = 'Time Series (Daily)'
 dict_level_2 = observation_date
 
-# call alpha vantage API and load the results into a dictionary
+# call alpha vantage API and load the results into a list of records
 stock_observation_list = []
 
-print(list(symbol_dict.keys()))
-
-for current_symbol in list(symbol_dict.keys())[7:9]:
+for current_symbol in list(symbol_dict.keys()):
 
     # call alpha vantage API and load the results into a dictionary
     url = f'https://www.alphavantage.co/query?function={alpha_function}&symbol={current_symbol}&outputsize={alpha_output_size}&apikey={alpha_apikey}'
     r = requests.get(url)
     data = r.json()
+
     stock_observation = (
-        observation_date,
         symbol_dict[current_symbol],
+        observation_date,
+        data[dict_level_1][dict_level_2]['5. volume'],
         data[dict_level_1][dict_level_2]['1. open'],
         data[dict_level_1][dict_level_2]['2. high'],
         data[dict_level_1][dict_level_2]['3. low'],
         data[dict_level_1][dict_level_2]['4. close'],
-        data[dict_level_1][dict_level_2]['5. volume'],
     )
-
+    stock_observation_list.append(stock_observation)
     print(stock_observation)
 
     time.sleep(30)
 
 
-"""
+
+
 # path to text file for output
 directory_output = os.getcwd()
 filename_output = 'windex.txt'
