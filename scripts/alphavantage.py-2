@@ -35,7 +35,7 @@ stock_observation_list = []
 
 print(list(symbol_dict.keys()))
 
-for current_symbol in list(symbol_dict.keys()):
+for current_symbol in list(symbol_dict.keys())[7:9]:
 
     # call alpha vantage API and load the results into a dictionary
     url = f'https://www.alphavantage.co/query?function={alpha_function}&symbol={current_symbol}&outputsize={alpha_output_size}&apikey={alpha_apikey}'
