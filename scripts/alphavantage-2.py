@@ -33,13 +33,9 @@ dict_level_2 = observation_date
 # call alpha vantage API and load the results into a list of records
 stock_observation_list = []
 
-<<<<<<< HEAD:scripts/alphavantage.py-2
 print(list(symbol_dict.keys()))
 
-for current_symbol in list(symbol_dict.keys())[7:9]:
-=======
 for current_symbol in list(symbol_dict.keys()):
->>>>>>> e2e44c47436f41939bd988fd4be7d5729244b422:scripts/alphavantage-2.py
 
     # call alpha vantage API and load the results into a dictionary
     url = f'https://www.alphavantage.co/query?function={alpha_function}&symbol={current_symbol}&outputsize={alpha_output_size}&apikey={alpha_apikey}'
