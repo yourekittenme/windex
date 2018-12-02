@@ -27,7 +27,7 @@ class AlphaVantage:
         for current_symbol in self.symbol:
             if self.function == 'PRIOR_DAY':
                 stock_observation_list.append(self.prior_day(current_symbol))
-            time.sleep(self.cooldown_time)
+        time.sleep(self.cooldown_time)
 
     def prior_day(self, lookup_symbol):
         api_function = 'TIME_SERIES_DAILY'
@@ -92,26 +92,7 @@ class Observation:
             stock_symbols[marketsymbol_list[n]] = id_list[n]
         return stock_symbols
 
-
-# create a connection to the database
-    alpha_output_size = 'full'
-    alpha_function = 'TIME_SERIES_DAILY'
-
-# get the list of stock symbols to lookup
-
 """
-
-# define alpha vantage API parameters
-
-
-
-
-print(list(symbol_dict.keys()))
-
-
-
-
-
 # path to text file for output
 directory_output = os.getcwd()
 filename_output = 'windex.txt'
