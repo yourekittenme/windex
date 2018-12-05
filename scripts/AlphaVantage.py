@@ -1,8 +1,5 @@
 import datetime
-import os
-import pandas as pd
 import requests
-import sqlite3
 import time
 
 
@@ -27,7 +24,7 @@ class AlphaVantage:
         for current_symbol in self.symbol:
             if self.function == 'prior':
                 stock_observation_list.append(self.prior_day(current_symbol))
-        time.sleep(self.cooldown_time)
+            time.sleep(self.cooldown_time)
 
         return stock_observation_list
 
@@ -35,7 +32,7 @@ class AlphaVantage:
         api_function = 'TIME_SERIES_DAILY'
 
         # define where the previous day stock closing price will be found in the json from Alpha Vantage's API
-        observation_date = (datetime.datetime.now() + datetime.timedelta(days=-2)).strftime('%Y-%m-%d')
+        observation_date = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
         dict_level_1 = 'Time Series (Daily)'
         dict_level_2 = observation_date
 
@@ -60,8 +57,3 @@ class AlphaVantage:
         )
 
         return stock_tuple
-
-
-if __name__ == "__main__":
-    a = AlphaVantage(['TSX:NFI', 'TSX:BYD-UN', 'TSX:AFN'], 'prior', 'VWXATT8K62KW1GZH')
-    print(a.get())
