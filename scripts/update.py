@@ -1,34 +1,30 @@
 from AlphaVantage import AlphaVantage
-
-import os
+from SqlQuery import SqlQuery
 import pandas as pd
-import sqlite3
 
 
-class SqlQuery:
+class Observation:
 
-    def __init__(self, path):
-        self.conn = sqlite3.connect(path)
+    columns_list = ['marketsymbol', 'observation_date', 'volume', 'high_price',
+                    'low_price', 'open_price', 'close_price']
 
-    def read(self, sql):
-        return pd.read_sql(sql, self.conn)
+    def __init__(self, obs_records):
+        self.df = pd.DataFrame.from_records(obs_records, columns=self.columns_list)
 
-    def write(self, df, db_table):
-        pd.DataFrame.to_sql(df, db_table, self.conn, if_exists='append', index=False)
+    def get_symbol_fk(self):
 
+        sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = \'False\''
+        q = SqlQuery()
+        df_symbol = q.read(sql)
 
-directory_db = '\\'.join(os.getcwd().split('\\')[0:-1])
-filename_db = 'db.sqlite3'
-path_db = directory_db + '\\' + filename_db
+        self.df = pd.merge(df_symbol, self.df, on='marketsymbol')
+        self.df.drop(columns='marketsymbol', inplace=True)
+        self.df.rename(columns={'id': 'stock_id'}, inplace=True)
 
-sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = \'False\''
-q = SqlQuery(path_db)
-df_symbol = q.read(sql)
-
-"""
-
-a = AlphaVantage(symbol_list, 'prior', 'VWXATT8K62KW1GZH')
-"""
+    def write(self):
+        db_table = 'stockindex_app_observations'
+        q = SqlQuery()
+        q.write(self.df, db_table)
 
 
 test_records = [('TSX:BUI', '2018-12-03', '0', '3.6900', '3.6900', '3.6900', '3.6900'),
@@ -41,17 +37,18 @@ test_records = [('TSX:BUI', '2018-12-03', '0', '3.6900', '3.6900', '3.6900', '3.
                 ('TSX:AFN', '2018-12-03', '18400', '54.4400', '54.4400', '53.3400', '53.6300'),
                 ('TSX:EIF', '2018-12-03', '67300', '31.3000', '31.4800', '30.4500', '30.9900')]
 
-columns_list = ['marketsymbol','observation_date','volume','high_price','low_price','open_price','close_price']
+if __name__ == "__main__":
 
-df_alpha = pd.DataFrame.from_records(test_records, columns=columns_list)
-df_merge = pd.merge(df_symbol, df_alpha, on='marketsymbol')
-df_merge.drop(columns='marketsymbol', inplace=True)
-df_merge.rename(columns={'id': 'stock_id'}, inplace=True)
-
-
-q.write(df_merge, 'stockindex_app_observations')
+    o = Observation(test_records)
+    print(o.df.head())
+    o.get_symbol_fk()
+    print(o.df.head())
+    o.write()
 
 """
+
+a = AlphaVantage(symbol_list, 'prior', 'VWXATT8K62KW1GZH')
+
 unused code 
 
 
