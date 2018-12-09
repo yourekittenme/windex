@@ -51,27 +51,6 @@ a = AlphaVantage(symbol_list, 'prior', 'VWXATT8K62KW1GZH')
 
 unused code 
 
-
-
-class Observation:
-
-    def __init__(self):
-        self.stock_symbols = self.get_active_stock_symbols()
-
-    @staticmethod
-    def get_active_stock_symbols():
-        # generate two lists: active stock symbols and their primary keys
-        sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = \'False\''
-        qry = SqlQuery(sql)
-        marketsymbol_list = qry.result['marketsymbol'].tolist()
-        id_list = qry.result['id'].tolist()
-
-        # load active stock symbols and primary keys into a dictionary
-        stock_symbols = {}
-        for n in range(0, len(marketsymbol_list)):
-            stock_symbols[marketsymbol_list[n]] = id_list[n]
-        return stock_symbols
-
 # path to text file for output
 directory_output = os.getcwd()
 filename_output = 'windex.txt'
