@@ -40,11 +40,9 @@ test_records = [('TSX:BUI', '2018-12-03', '0', '3.6900', '3.6900', '3.6900', '3.
 if __name__ == "__main__":
 
     o = Observation(test_records)
-    print(o.df.head())
     o.get_symbol_fk()
-    print(o.df.head())
     o.write()
-
+    print(o.df.head())
 """
 
 a = AlphaVantage(symbol_list, 'prior', 'VWXATT8K62KW1GZH')
