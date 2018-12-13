@@ -27,6 +27,20 @@ class Observation:
         q.write(self.df, db_table)
 
 
+def get_symbol_list():
+    sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = \'False\''
+    q = SqlQuery()
+    symbol_list = q.read(sql)['marketsymbol'].tolist()
+    return symbol_list
+
+
+if __name__ == "__main__":
+    a = AlphaVantage(get_symbol_list(), 'prior', 'VWXATT8K62KW1GZH')
+    o = Observation(a.get())
+    o.get_symbol_fk()
+    o.write()
+
+"""
 test_records = [('TSX:BUI', '2018-12-03', '0', '3.6900', '3.6900', '3.6900', '3.6900'),
                 ('TSX:BYD-UN', '2018-12-03', '83073', '115.9700', '121.2100', '114.1700', '118.7800'),
                 ('TSX:GWO', '2018-12-03', '725300', '30.5500', '30.5900', '29.8400', '30.0000'),
@@ -36,16 +50,6 @@ test_records = [('TSX:BUI', '2018-12-03', '0', '3.6900', '3.6900', '3.6900', '3.
                 ('TSX:NWC', '2018-12-03', '76200', '29.2900', '29.4400', '28.8100', '29.3000'),
                 ('TSX:AFN', '2018-12-03', '18400', '54.4400', '54.4400', '53.3400', '53.6300'),
                 ('TSX:EIF', '2018-12-03', '67300', '31.3000', '31.4800', '30.4500', '30.9900')]
-
-if __name__ == "__main__":
-
-    o = Observation(test_records)
-    o.get_symbol_fk()
-    o.write()
-    print(o.df.head())
-"""
-
-a = AlphaVantage(symbol_list, 'prior', 'VWXATT8K62KW1GZH')
 
 unused code 
 
@@ -58,5 +62,4 @@ path_output = directory_output + '\\' + filename_output
 with open(path_output, 'w') as f:
   for dict_key in stock_dict.keys():
       f.write(str(stock_dict[dict_key]))
-
 """
