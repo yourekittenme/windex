@@ -27,7 +27,7 @@ class Stock(models.Model):
 class Observations(models.Model):
     """Daily statistics about how a stock is trading"""
     stock = models.ForeignKey('Stock', on_delete=models.CASCADE)
-    observation_date = models.DateTimeField()
+    observation_date = models.DateTimeField(null=True)
     volume = models.IntegerField(null=True)
     open_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     high_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
