@@ -2,6 +2,7 @@ import datetime
 from datetime import timedelta
 from AlphaVantage import AlphaVantage
 from SqlQuery import SqlQuery
+from TmxMoney import TmxMoney
 import pandas as pd
 
 
@@ -55,6 +56,10 @@ class Stock:
         self.df = pd.merge(self.df, df_highlow, how='inner', left_on='id', right_on='stock_id')
         self.df.drop('stock_id', axis=1, inplace=True)
 
+    def get_shares_outstanding(self):
+        shares_out_list = [x.replace('-', '.') for x in self.df['symbol'].tolist()]
+        tmx = TmxMoney(shares_out_list)
+        print(shares_out_list)
 
 def get_mktsymbol_list():
     sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = 0'
@@ -80,10 +85,10 @@ if __name__ == "__main__":
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()
-    print(s.df.to_string())
+    s.get_shares_outstanding()
 
 """
-
+print(s.df.to_string())
 
 
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
