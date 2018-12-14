@@ -13,7 +13,7 @@ class Observation:
     def __init__(self, obs_records):
         self.df = pd.DataFrame.from_records(obs_records, columns=self.columns_list)
 
-    def get_symbol_fk(self):
+    def get_stock_fk(self):
 
         sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = 0'
         q = SqlQuery()
@@ -56,7 +56,7 @@ class Stock:
         self.df.drop('stock_id', axis=1, inplace=True)
 
 
-def get_symbol_list():
+def get_mktsymbol_list():
     sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = 0'
     q = SqlQuery()
     symbol_list = q.read(sql)['marketsymbol'].tolist()
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                     ('TSX:EIF', '2018-12-03', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
 
     o = Observation(test_records)
-    o.get_symbol_fk()
+    o.get_stock_fk()
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
 
 
-    a = AlphaVantage(get_symbol_list(), 'prior', 'VWXATT8K62KW1GZH')
+    a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     o = Observation(a.get())
     o.get_symbol_fk()
     o.write()
