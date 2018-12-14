@@ -44,14 +44,17 @@ class Stock:
         self.df.rename(columns={'close_price': 'current_price'}, inplace=True)
         self.df['change_price'] = self.df['current_price'] - self.df['prior_close_price']
         self.df.drop('stock_id', axis=1, inplace=True)
-        #print(s.df.to_string())
 
     def update_52_week_highlow(self):
         year_ago = datetime.datetime.now() - datetime.timedelta(weeks=52)
         sql = 'SELECT stock_id, max(high_price) high_price_52_weeks, min(low_price) low_price_52_weeks ' \
               'FROM stockindex_app_observations GROUP BY stock_id'
         q = SqlQuery()
-        df = q.read(sql)
+        df_highlow = q.read(sql)
+        self.df.drop(['high_price_52_weeks', 'low_price_52_weeks'], axis=1, inplace=True)
+        self.df = pd.merge(self.df, df_highlow, how='inner', left_on='id', right_on='stock_id')
+        self.df.drop('stock_id', axis=1, inplace=True)
+
 
 def get_symbol_list():
     sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = 0'
@@ -77,6 +80,7 @@ if __name__ == "__main__":
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()
+    print(s.df.to_string())
 
 """
 
