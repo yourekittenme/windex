@@ -59,7 +59,19 @@ class Stock:
     def get_shares_outstanding(self):
         shares_out_list = [x.replace('-', '.') for x in self.df['symbol'].tolist()]
         tmx = TmxMoney(shares_out_list)
-        print(shares_out_list)
+        df_shares_out = tmx.get_shares_outstanding()
+        self.df.drop(['shares_outstanding'], axis=1, inplace=True)
+        self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
+
+    def calculate_mktcap(self):
+        self.df['market_cap'] = self.df['current_price'] * self.df['shares_outstanding']
+        print(self.df.to_string())
+
+    def write(self):
+        db_table = 'stockindex_app_stcok'
+        q = SqlQuery()
+        q.write(self.df, db_table)
+
 
 def get_mktsymbol_list():
     sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = 0'
@@ -86,6 +98,7 @@ if __name__ == "__main__":
     s.update_price(o.df)
     s.update_52_week_highlow()
     s.get_shares_outstanding()
+    s.calculate_mktcap()
 
 """
 print(s.df.to_string())
