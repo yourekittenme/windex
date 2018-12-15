@@ -56,19 +56,17 @@ class Stock:
         self.df = pd.merge(self.df, df_highlow, how='inner', left_on='id', right_on='stock_id')
         self.df.drop('stock_id', axis=1, inplace=True)
 
-    def get_shares_outstanding(self):
+    def calculate_mktcap(self):
         shares_out_list = [x.replace('-', '.') for x in self.df['symbol'].tolist()]
         tmx = TmxMoney(shares_out_list)
         df_shares_out = tmx.get_shares_outstanding()
         self.df.drop(['shares_outstanding'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
-
-    def calculate_mktcap(self):
         self.df['market_cap'] = self.df['current_price'] * self.df['shares_outstanding']
         print(self.df.to_string())
 
     def write(self):
-        db_table = 'stockindex_app_stcok'
+        db_table = 'stockindex_app_stock'
         q = SqlQuery()
         q.write(self.df, db_table)
 
@@ -97,26 +95,15 @@ if __name__ == "__main__":
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()
-    s.get_shares_outstanding()
     s.calculate_mktcap()
+    s.write()
 
 """
 print(s.df.to_string())
-
 
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     o = Observation(a.get())
     o.get_symbol_fk()
     o.write()
-
-    test_records = [('TSX:BUI', '2018-12-03', 0, 3.6900, 3.6900, 3.6900, 3.6900),
-                    ('TSX:BYD-UN', '2018-12-03', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
-                    ('TSX:GWO', '2018-12-03', 725300, 30.5500, 30.5900, 29.8400, 30.0000),
-                    ('TSX:IGM', '2018-12-03', 328800, 34.2600, 34.8400, 34.1900, 34.8400),
-                    ('TSX:PBL', '2018-12-03', 6200, 22.1000, 22.3700, 22.0100, 22.3700),
-                    ('TSX:NFI', '2018-12-03', 448300, 38.2100, 38.4200, 37.1800, 37.3600),
-                    ('TSX:NWC', '2018-12-03', 76200, 29.2900, 29.4400, 28.8100, 29.3000),
-                    ('TSX:AFN', '2018-12-03', 18400, 54.4400, 54.4400, 53.3400, 53.6300),
-                    ('TSX:EIF', '2018-12-03', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
 
 """
