@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
 test_records_update = [(0, 1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000e+07, 'TSX', 'TSX:BUI', '',
                         3.69,  3.69,  3.69, 3.94, 3.53, 25000000),
-                     (1, 2, 'BYD-UN', 'The Boyd Group', 111.1 ,  7.68, 0, 2.33681536e+09, 'TSX', 'TSX:BYD-UN', '',
+                     (1, 2, 'BYD-UN', 'The Boyd Group', 111.1,  7.68, 0, 2.33681536e+09, 'TSX', 'TSX:BYD-UN', '',
                       118.78, 115.97, 121.21, 133, 102.59,  19673475),
                      (2, 3, 'GWO', 'Great West Life Company',  27.87,  2.13, 0, 2.96515036e+10, 'TSX', 'TSX:GWO', '',
                       30,  30.55,  30.59, 33.1,  28.37, 988383452),
