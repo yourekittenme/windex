@@ -2,6 +2,8 @@ import datetime
 from datetime import timedelta
 from AlphaVantage import AlphaVantage
 from SqlQuery import SqlQuery
+from sqlalchemy_test import SqlConnection
+from sqlalchemy import select
 from TmxMoney import TmxMoney
 import pandas as pd
 
@@ -16,9 +18,16 @@ class Observation:
 
     def get_stock_fk(self):
 
+        tbl = 'stockindex_app_stock'
+        stock = SqlConnection(tbl)
+        qry = select([stock.table.c.marketsymbol, stock.table.c.id]).where(stock.table.c.inactive == 0)
+        df_symbol = stock.execute_query(qry, output='df')
+
+        """
         sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = 0'
         q = SqlQuery()
         df_symbol = q.read(sql)
+        """
 
         self.df = pd.merge(df_symbol, self.df, on='marketsymbol')
         self.df.drop(columns='marketsymbol', inplace=True)
@@ -80,19 +89,21 @@ def get_mktsymbol_list():
 
 if __name__ == "__main__":
 
-    test_records = [('TSX:BUI', '2018-12-03', 0, 3.6900, 3.6900, 3.6900, 3.6900),
-                    ('TSX:BYD-UN', '2018-12-03', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
-                    ('TSX:GWO', '2018-12-03', 725300, 30.5500, 30.5900, 29.8400, 30.0000),
-                    ('TSX:IGM', '2018-12-03', 328800, 34.2600, 34.8400, 34.1900, 34.8400),
-                    ('TSX:PBL', '2018-12-03', 6200, 22.1000, 22.3700, 22.0100, 22.3700),
-                    ('TSX:NFI', '2018-12-03', 448300, 38.2100, 38.4200, 37.1800, 37.3600),
-                    ('TSX:NWC', '2018-12-03', 76200, 29.2900, 29.4400, 28.8100, 29.3000),
-                    ('TSX:AFN', '2018-12-03', 18400, 54.4400, 54.4400, 53.3400, 53.6300),
-                    ('TSX:EIF', '2018-12-03', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
+    test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),
+                    ('TSX:BYD-UN', '2018-12-03 00:00:00', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
+                    ('TSX:GWO', '2018-12-03 00:00:00', 725300, 30.5500, 30.5900, 29.8400, 30.0000),
+                    ('TSX:IGM', '2018-12-03 00:00:00', 328800, 34.2600, 34.8400, 34.1900, 34.8400),
+                    ('TSX:PBL', '2018-12-03 00:00:00', 6200, 22.1000, 22.3700, 22.0100, 22.3700),
+                    ('TSX:NFI', '2018-12-03 00:00:00', 448300, 38.2100, 38.4200, 37.1800, 37.3600),
+                    ('TSX:NWC', '2018-12-03 00:00:00', 76200, 29.2900, 29.4400, 28.8100, 29.3000),
+                    ('TSX:AFN', '2018-12-03 00:00:00', 18400, 54.4400, 54.4400, 53.3400, 53.6300),
+                    ('TSX:EIF', '2018-12-03 00:00:00', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
 
     o = Observation(test_records)
-    """
     o.get_stock_fk()
+    print(o.df.to_string())
+    """
+    
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()

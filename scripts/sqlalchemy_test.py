@@ -11,15 +11,12 @@ class SqlConnection:
     filename_db = 'db.sqlite3'
     path_db = type_db + ':///' + directory_db + '\\' + filename_db
 
-    def __init__(self):
+    def __init__(self, db_table):
         self.engine = create_engine(self.path_db)
         self.connection = self.engine.connect()
         self.metadata = MetaData()
         self.query = None
         self.results = None
-        self.table = None
-
-    def get_table(self, db_table):
         self.table = Table(db_table, self.metadata, autoload=True, autoload_with=self.engine)
 
     def execute_query(self, sqlalchemy_query, output='records'):
@@ -28,14 +25,14 @@ class SqlConnection:
             self.query = sqlalchemy_query
             self.results = self.connection.execute(self.query).fetchall()
             if output == 'df':
-                return pd.DataFrame.from_records(self.results, columns=self.table.columns.keys())
+                return pd.DataFrame.from_records(self.results, columns=self.query.columns.keys())
             if output == 'records':
                 return self.results
 
 
+
 if __name__ == '__main__':
-    s = SqlConnection()
-    s.get_table('stockindex_app_stock')
+    s = SqlConnection('stockindex_app_stock')
     q = select([s.table])
     print(s.execute_query(q, output='df').to_string())
 
