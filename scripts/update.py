@@ -1,9 +1,10 @@
 import datetime
 from datetime import timedelta
 from AlphaVantage import AlphaVantage
+from datetime import datetime
 from SqlQuery import SqlQuery
 from sqlalchemy_test import SqlConnection
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from TmxMoney import TmxMoney
 import pandas as pd
 
@@ -15,13 +16,14 @@ class Observation:
 
     def __init__(self, obs_records):
         self.df = pd.DataFrame.from_records(obs_records, columns=self.columns_list)
+        self.df['observation_date'] = pd.to_datetime(self.df['observation_date'], format='%Y-%m-%d %H:%M:%S')
 
     def get_stock_fk(self):
 
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
-        qry = select([stock.table.c.marketsymbol, stock.table.c.id]).where(stock.table.c.inactive == 0)
-        df_symbol = stock.execute_query(qry, output='df')
+        stmt = select([stock.table.c.marketsymbol, stock.table.c.id]).where(stock.table.c.inactive == 0)
+        df_symbol = stock.select_query(stmt, output='df')
 
         """
         sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = 0'
@@ -34,9 +36,10 @@ class Observation:
         self.df.rename(columns={'id': 'stock_id'}, inplace=True)
 
     def write(self):
-        db_table = 'stockindex_app_observations'
-        q = SqlQuery()
-        q.write(self.df, db_table)
+        tbl = 'stockindex_app_observations'
+        observation = SqlConnection(tbl)
+        stmt = insert(observation.table)
+        observation.insert_query(stmt, self.df)
 
 
 class Stock:
@@ -101,7 +104,7 @@ if __name__ == "__main__":
 
     o = Observation(test_records)
     o.get_stock_fk()
-    print(o.df.to_string())
+    o.write()
     """
     
     s = Stock()

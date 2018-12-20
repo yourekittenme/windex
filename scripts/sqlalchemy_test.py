@@ -19,7 +19,7 @@ class SqlConnection:
         self.results = None
         self.table = Table(db_table, self.metadata, autoload=True, autoload_with=self.engine)
 
-    def execute_query(self, sqlalchemy_query, output='records'):
+    def select_query(self, sqlalchemy_query, output='records'):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
             self.query = sqlalchemy_query
@@ -29,6 +29,10 @@ class SqlConnection:
             if output == 'records':
                 return self.results
 
+    def insert_query(self, sqlalchemy_query, insert_values):
+        values_list = [x for x in insert_values.T.to_dict().values()]
+        results = self.connection.execute(sqlalchemy_query, values_list)
+        # print(results.rowcount) turn this into logging later
 
 
 if __name__ == '__main__':
