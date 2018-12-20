@@ -32,7 +32,7 @@ class TmxMoney:
                 shares_outstanding
             )
             shares_out_records.append(shares_out_tuple)
-            time.sleep(8)
+            time.sleep(3)
 
         df_shares_out = pd.DataFrame.from_records(shares_out_records, columns=['symbol', 'shares_outstanding'])
 

@@ -4,7 +4,7 @@ from AlphaVantage import AlphaVantage
 from datetime import datetime
 from SqlQuery import SqlQuery
 from sqlalchemy_test import SqlConnection
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, func
 from TmxMoney import TmxMoney
 import pandas as pd
 
@@ -19,17 +19,10 @@ class Observation:
         self.df['observation_date'] = pd.to_datetime(self.df['observation_date'], format='%Y-%m-%d %H:%M:%S')
 
     def get_stock_fk(self):
-
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
         stmt = select([stock.table.c.marketsymbol, stock.table.c.id]).where(stock.table.c.inactive == 0)
-        df_symbol = stock.select_query(stmt, output='df')
-
-        """
-        sql = 'SELECT marketsymbol, id FROM stockindex_app_stock WHERE inactive = 0'
-        q = SqlQuery()
-        df_symbol = q.read(sql)
-        """
+        df_symbol = stock.select_query(stmt)
 
         self.df = pd.merge(df_symbol, self.df, on='marketsymbol')
         self.df.drop(columns='marketsymbol', inplace=True)
@@ -45,9 +38,11 @@ class Observation:
 class Stock:
 
     def __init__(self):
-        sql = 'SELECT * FROM stockindex_app_stock WHERE inactive = 0'
-        q = SqlQuery()
-        self.df = q.read(sql)
+
+        tbl = 'stockindex_app_stock'
+        stock = SqlConnection(tbl)
+        stmt = select([stock.table]).where(stock.table.c.inactive == 0)
+        self.df = stock.select_query(stmt)
 
     def update_price(self, df_obs):
         self.df['prior_close_price'] = self.df['current_price']
@@ -55,15 +50,19 @@ class Stock:
         df_obs = df_obs[['stock_id', 'close_price', 'high_price', 'low_price']]
         self.df = pd.merge(self.df, df_obs, how='inner', left_on='id', right_on='stock_id')
         self.df.rename(columns={'close_price': 'current_price'}, inplace=True)
-        self.df['change_price'] = self.df['current_price'] - self.df['prior_close_price']
+        self.df['change_price'] = pd.to_numeric(self.df['current_price']) - pd.to_numeric(self.df['prior_close_price'])
         self.df.drop('stock_id', axis=1, inplace=True)
 
     def update_52_week_highlow(self):
-        year_ago = datetime.datetime.now() - datetime.timedelta(weeks=52)
-        sql = 'SELECT stock_id, max(high_price) high_price_52_weeks, min(low_price) low_price_52_weeks ' \
-              'FROM stockindex_app_observations GROUP BY stock_id'
-        q = SqlQuery()
-        df_highlow = q.read(sql)
+
+        tbl = 'stockindex_app_observations'
+        observation = SqlConnection(tbl)
+        highest_price = func.max(observation.table.c.high_price).label('high_price_52_weeks')
+        lowest_price = func.min(observation.table.c.low_price).label('low_price_52_weeks')
+        stmt = select([observation.table.c.stock_id, highest_price, lowest_price])
+        stmt = stmt.group_by(observation.table.c.stock_id)
+        df_highlow = observation.select_query(stmt)
+
         self.df.drop(['high_price_52_weeks', 'low_price_52_weeks'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_highlow, how='inner', left_on='id', right_on='stock_id')
         self.df.drop('stock_id', axis=1, inplace=True)
@@ -75,7 +74,7 @@ class Stock:
         self.df.drop(['shares_outstanding'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
         self.df['market_cap'] = self.df['current_price'] * self.df['shares_outstanding']
-        print(self.df.to_records())
+        print(self.df.to_string())
 
     def write(self):
         db_table = 'stockindex_app_stock'
@@ -104,9 +103,15 @@ if __name__ == "__main__":
 
     o = Observation(test_records)
     o.get_stock_fk()
-    o.write()
+    #o.write()
+    s = Stock()
+    s.update_price(o.df)
+    s.update_52_week_highlow()
+    s.calculate_mktcap()
     """
-    
+    o = Observation(test_records)
+    o.get_stock_fk()
+    o.write()   
     s = Stock()
     s.update_price(o.df)
     s.update_52_week_highlow()

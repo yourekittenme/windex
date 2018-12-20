@@ -17,13 +17,15 @@ class SqlConnection:
         self.metadata = MetaData()
         self.query = None
         self.results = None
+        self.rowcount = 0
         self.table = Table(db_table, self.metadata, autoload=True, autoload_with=self.engine)
 
-    def select_query(self, sqlalchemy_query, output='records'):
+    def select_query(self, sqlalchemy_query, output='df'):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
             self.query = sqlalchemy_query
             self.results = self.connection.execute(self.query).fetchall()
+            # get rowcount and put to self.rowcount
             if output == 'df':
                 return pd.DataFrame.from_records(self.results, columns=self.query.columns.keys())
             if output == 'records':
@@ -31,14 +33,14 @@ class SqlConnection:
 
     def insert_query(self, sqlalchemy_query, insert_values):
         values_list = [x for x in insert_values.T.to_dict().values()]
-        results = self.connection.execute(sqlalchemy_query, values_list)
-        # print(results.rowcount) turn this into logging later
+        self.results = self.connection.execute(sqlalchemy_query, values_list)
+        # get rowcount and put to self.rowcount
 
 
 if __name__ == '__main__':
     s = SqlConnection('stockindex_app_stock')
     q = select([s.table])
-    print(s.execute_query(q, output='df').to_string())
+    print(s.select_query(q, output='df').to_string())
 
     test_records_update = [(1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000e+07, 'TSX', 'TSX:BUI', '',
                             3.69,  3.69,  3.69, 3.94, 3.53, 25000000),
