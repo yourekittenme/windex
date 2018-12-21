@@ -83,9 +83,11 @@ class Stock:
 
 
 def get_mktsymbol_list():
-    sql = 'SELECT marketsymbol FROM stockindex_app_stock WHERE inactive = 0'
-    q = SqlQuery()
-    symbol_list = q.read(sql)['marketsymbol'].tolist()
+    tbl = 'stockindex_app_stock'
+    stock = SqlConnection(tbl)
+    stmt = select([stock.table.c.marketsymbol]).where(stock.table.c.inactive == 0)
+    df = stock.select_query(stmt)
+    symbol_list = df['marketsymbol'].tolist()
     return symbol_list
 
 
@@ -100,6 +102,7 @@ if __name__ == "__main__":
                     ('TSX:NWC', '2018-12-03 00:00:00', 76200, 29.2900, 29.4400, 28.8100, 29.3000),
                     ('TSX:AFN', '2018-12-03 00:00:00', 18400, 54.4400, 54.4400, 53.3400, 53.6300),
                     ('TSX:EIF', '2018-12-03 00:00:00', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
+
 
     o = Observation(test_records)
     o.get_stock_fk()

@@ -36,7 +36,7 @@ class SqlConnection:
         self.results = self.connection.execute(sqlalchemy_query, values_list)
         # get rowcount and put to self.rowcount
 
-
+e
 if __name__ == '__main__':
     s = SqlConnection('stockindex_app_stock')
     q = select([s.table])
