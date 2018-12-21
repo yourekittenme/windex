@@ -4,7 +4,8 @@ from AlphaVantage import AlphaVantage
 from datetime import datetime
 from SqlQuery import SqlQuery
 from sqlalchemy_test import SqlConnection
-from sqlalchemy import select, insert, func
+from sqlalchemy import select, insert, func, update
+from sqlalchemy.orm import sessionmaker
 from TmxMoney import TmxMoney
 import pandas as pd
 
@@ -74,7 +75,6 @@ class Stock:
         self.df.drop(['shares_outstanding'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
         self.df['market_cap'] = self.df['current_price'] * self.df['shares_outstanding']
-        print(self.df.to_string())
 
     def write(self):
         db_table = 'stockindex_app_stock'
@@ -111,6 +111,8 @@ if __name__ == "__main__":
     s.update_price(o.df)
     s.update_52_week_highlow()
     s.calculate_mktcap()
+    s.write()
+
     """
     o = Observation(test_records)
     o.get_stock_fk()

@@ -36,7 +36,11 @@ class SqlConnection:
         self.results = self.connection.execute(sqlalchemy_query, values_list)
         # get rowcount and put to self.rowcount
 
-e
+    def update_query(self, sqlalchemy_query):
+        self.results = self.connection.execute(sqlalchemy_query)
+        # get rowcount and put to self.rowcount
+
+
 if __name__ == '__main__':
     s = SqlConnection('stockindex_app_stock')
     q = select([s.table])
