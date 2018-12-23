@@ -35,5 +35,6 @@ class TmxMoney:
             time.sleep(3)
 
         df_shares_out = pd.DataFrame.from_records(shares_out_records, columns=['symbol', 'shares_outstanding'])
+        df_shares_out['shares_outstanding'] = pd.to_numeric(df_shares_out['shares_outstanding'])
 
         return df_shares_out

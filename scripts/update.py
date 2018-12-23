@@ -1,13 +1,11 @@
-import datetime
-from datetime import timedelta
 from AlphaVantage import AlphaVantage
-from datetime import datetime
-from SqlQuery import SqlQuery
-from sqlalchemy_test import SqlConnection
+from SqlQuery import SqlConnection
 from sqlalchemy import select, insert, func, update
-from sqlalchemy.orm import sessionmaker
 from TmxMoney import TmxMoney
 import pandas as pd
+
+import logging
+logging.basicConfig(filename='log.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class Observation:
@@ -52,10 +50,10 @@ class Stock:
         self.df = pd.merge(self.df, df_obs, how='inner', left_on='id', right_on='stock_id')
         self.df.rename(columns={'close_price': 'current_price'}, inplace=True)
         self.df['change_price'] = pd.to_numeric(self.df['current_price']) - pd.to_numeric(self.df['prior_close_price'])
+        self.df['change_price'] = self.df['change_price'].round(decimals=2)
         self.df.drop('stock_id', axis=1, inplace=True)
 
     def update_52_week_highlow(self):
-
         tbl = 'stockindex_app_observations'
         observation = SqlConnection(tbl)
         highest_price = func.max(observation.table.c.high_price).label('high_price_52_weeks')
@@ -74,12 +72,29 @@ class Stock:
         df_shares_out = tmx.get_shares_outstanding()
         self.df.drop(['shares_outstanding'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
-        self.df['market_cap'] = self.df['current_price'] * self.df['shares_outstanding']
+        self.df['market_cap'] = \
+            (pd.to_numeric(self.df['current_price']) * pd.to_numeric(self.df['shares_outstanding'])).astype('int64')
 
     def write(self):
-        db_table = 'stockindex_app_stock'
-        q = SqlQuery()
-        q.write(self.df, db_table)
+        tbl = 'stockindex_app_stock'
+        stock = SqlConnection(tbl)
+        values_list = [x for x in self.df.T.to_dict().values()]
+
+        for value in values_list:
+            stmt = update(stock.table).values(
+                current_price=value['current_price'],
+                prior_close_price=value['prior_close_price'],
+                change_price=value['change_price'],
+                market_cap=value['market_cap'],
+                high_price=value['high_price'],
+                low_price=value['low_price'],
+                high_price_52_weeks=value['high_price_52_weeks'],
+                low_price_52_weeks=value['low_price_52_weeks'],
+                shares_outstanding=value['shares_outstanding']
+            ).where(
+                stock.table.c.id == value['id']
+            )
+            stock.update_query(stmt)
 
 
 def get_mktsymbol_list():
@@ -93,6 +108,27 @@ def get_mktsymbol_list():
 
 if __name__ == "__main__":
 
+    logging.debug('Start WINDEX update script')
+    a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
+    logging.debug('AlphaVantage API object created')
+    o = Observation(a.get())
+    logging.debug('Downloaded daily stock info from AlphaVantage')
+    o.get_stock_fk()
+    logging.debug('FKs obtained from database')
+    o.write()
+    logging.debug('Observations inserted into database')
+    s = Stock()
+    logging.debug('Queried active stocks in database')
+    s.update_price(o.df)
+    logging.debug('Updated prices of active stocks')
+    s.update_52_week_highlow()
+    logging.debug('Calculated 52 week high & low stock prices')
+    s.calculate_mktcap()
+    logging.debug('Calculated market capitalization')
+    s.write()
+    logging.debug('Stock updates loaded into database')
+
+    """
     test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),
                     ('TSX:BYD-UN', '2018-12-03 00:00:00', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
                     ('TSX:GWO', '2018-12-03 00:00:00', 725300, 30.5500, 30.5900, 29.8400, 30.0000),
@@ -103,26 +139,7 @@ if __name__ == "__main__":
                     ('TSX:AFN', '2018-12-03 00:00:00', 18400, 54.4400, 54.4400, 53.3400, 53.6300),
                     ('TSX:EIF', '2018-12-03 00:00:00', 67300, 31.3000, 31.4800, 30.4500, 30.9900)]
 
-
-    o = Observation(test_records)
-    o.get_stock_fk()
-    #o.write()
-    s = Stock()
-    s.update_price(o.df)
-    s.update_52_week_highlow()
-    s.calculate_mktcap()
-    s.write()
-
-    """
-    o = Observation(test_records)
-    o.get_stock_fk()
-    o.write()   
-    s = Stock()
-    s.update_price(o.df)
-    s.update_52_week_highlow()
-    s.calculate_mktcap()
-
-test_records_update = [(1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000e+07, 'TSX', 'TSX:BUI', '',
+    test_records_update = [(1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000e+07, 'TSX', 'TSX:BUI', '',
                         3.69,  3.69,  3.69, 3.94, 3.53, 25000000),
                      (2, 'BYD-UN', 'The Boyd Group', 111.1,  7.68, 0, 2.33681536e+09, 'TSX', 'TSX:BYD-UN', '',
                       118.78, 115.97, 121.21, 133, 102.59,  19673475),
@@ -140,13 +157,4 @@ test_records_update = [(1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000
                       30.99,  31.3,  31.48, 35.34,  26.87,  31374535),
                      (9, 'AFN', 'Ag Growth International',  50,  3.63, 0, 9.84849521e+08, 'TSX', 'TSX:AFN', '',
                       53.63,  54.44,  54.44, 64.72,  47.84,  18363780)]
-
-
-print(s.df.to_string())
-
-    a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
-    o = Observation(a.get())
-    o.get_symbol_fk()
-    o.write()
-
 """
