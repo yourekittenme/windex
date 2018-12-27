@@ -10,8 +10,8 @@ logging.basicConfig(filename='log.txt', level=logging.DEBUG, format='%(asctime)s
 
 class Observation:
 
-    columns_list = ['marketsymbol', 'observation_date', 'volume', 'high_price',
-                    'low_price', 'open_price', 'close_price']
+    columns_list = ['marketsymbol', 'observation_date', 'volume', 'open_price',
+                    'high_price', 'low_price', 'close_price']
 
     def __init__(self, obs_records):
         self.df = pd.DataFrame.from_records(obs_records, columns=self.columns_list)
@@ -37,7 +37,6 @@ class Observation:
 class Stock:
 
     def __init__(self):
-
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
         stmt = select([stock.table]).where(stock.table.c.inactive == 0)
@@ -74,6 +73,10 @@ class Stock:
         self.df = pd.merge(self.df, df_shares_out, how='inner', left_on='symbol', right_on='symbol')
         self.df['market_cap'] = \
             (pd.to_numeric(self.df['current_price']) * pd.to_numeric(self.df['shares_outstanding'])).astype('int64')
+        self.df['high_market_cap'] = \
+            (pd.to_numeric(self.df['high_price']) * pd.to_numeric(self.df['shares_outstanding'])).astype('int64')
+        self.df['low_market_cap'] = \
+            (pd.to_numeric(self.df['low_price']) * pd.to_numeric(self.df['shares_outstanding'])).astype('int64')
 
     def write(self):
         tbl = 'stockindex_app_stock'
@@ -86,6 +89,8 @@ class Stock:
                 prior_close_price=value['prior_close_price'],
                 change_price=value['change_price'],
                 market_cap=value['market_cap'],
+                high_market_cap=value['high_market_cap'],
+                low_market_cap=value['low_market_cap'],
                 high_price=value['high_price'],
                 low_price=value['low_price'],
                 high_price_52_weeks=value['high_price_52_weeks'],
@@ -95,6 +100,68 @@ class Stock:
                 stock.table.c.id == value['id']
             )
             stock.update_query(stmt)
+
+
+class Index:
+
+    def __init__(self):
+        tbl = 'stockindex_app_index'
+        index = SqlConnection(tbl)
+        stmt = select([index.table]).where(index.table.c.inactive == 0)
+        self.df = index.select_query(stmt)
+
+    def update_price(self):
+        tbl = 'stockindex_app_stocksindexed'
+        stocksindexed = SqlConnection(tbl)
+        stmt = select([stocksindexed.table])
+        df_stocksindexed = stocksindexed.select_query(stmt)
+
+        df_update = pd.merge(self.df, df_stocksindexed, how='inner', left_on='id', right_on='index_id')
+        df_update = df_update[['index_id','stock_id']]
+
+        tbl = 'stockindex_app_stock'
+        stock = SqlConnection(tbl)
+        stmt = select([stock.table.c.id,
+                       stock.table.c.marketsymbol,
+                       stock.table.c.market_cap,
+                       stock.table.c.high_market_cap,
+                       stock.table.c.low_market_cap,
+                       ]).where(stock.table.c.inactive == 0)
+        df_stock = stock.select_query(stmt)
+
+        df_update = pd.merge(df_update, df_stock, how='inner', left_on='stock_id', right_on='id')
+        df_update.drop(['stock_id', 'id'], axis=1, inplace=True)
+        df_update['market_cap'] = (df_update['market_cap']/1000000).astype('int64')
+        df_update['high_market_cap'] = (df_update['high_market_cap'] / 1000000).astype('int64')
+        df_update['low_market_cap'] = (df_update['low_market_cap'] / 1000000).astype('int64')
+        df_update = df_update.groupby('index_id')['market_cap', 'high_market_cap', 'low_market_cap'].sum()
+        df_update.rename(columns={'market_cap': 'current_value', 'high_market_cap': 'high_value',
+                                  'low_market_cap': 'low_value'}, inplace=True)
+
+        self.df['prior_close_value'] = self.df['current_value']
+        print(self.df.to_string())
+        self.df.drop(['current_value', 'high_value', 'low_value'], axis=1, inplace=True)
+        self.df = pd.merge(self.df, df_update, how='inner', left_on='id', right_on='index_id')
+        self.df['change_value'] = pd.to_numeric(self.df['current_value']) - pd.to_numeric(self.df['prior_close_value'])
+        self.df['change_value'] = self.df['change_value'].round(decimals=2)
+        print(self.df.to_string())
+
+    def write(self):
+        tbl = 'stockindex_app_index'
+        index = SqlConnection(tbl)
+        values_list = [x for x in self.df.T.to_dict().values()]
+
+        for value in values_list:
+            stmt = update(index.table).values(
+                current_value=value['current_value'],
+                prior_close_value=value['prior_close_value'],
+                change_value=value['change_value'],
+                high_value=value['high_value'],
+                low_value=value['low_value'],
+            ).where(
+                index.table.c.id == value['id']
+            )
+            index.update_query(stmt)
 
 
 def get_mktsymbol_list():
@@ -107,7 +174,13 @@ def get_mktsymbol_list():
 
 
 if __name__ == "__main__":
+    i = Index()
+    i.update_price()
+    i.write()
 
+    """  
+    
+    
     logging.debug('Start WINDEX update script')
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     logging.debug('AlphaVantage API object created')
@@ -128,7 +201,8 @@ if __name__ == "__main__":
     s.write()
     logging.debug('Stock updates loaded into database')
 
-    """
+
+    
     test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),
                     ('TSX:BYD-UN', '2018-12-03 00:00:00', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
                     ('TSX:GWO', '2018-12-03 00:00:00', 725300, 30.5500, 30.5900, 29.8400, 30.0000),

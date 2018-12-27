@@ -17,6 +17,8 @@ class Stock(models.Model):
     high_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     low_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     market_cap = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    high_market_cap = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    low_market_cap = models.DecimalField(decimal_places=2, max_digits=20, null=True)
     logo = models.ImageField(upload_to='', null=True)
     inactive = models.BooleanField(default=False)
 
@@ -44,6 +46,8 @@ class Index(models.Model):
     change_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     high_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     low_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    high_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    low_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     inactive = models.BooleanField(default=False)
 
     def __str__(self):
