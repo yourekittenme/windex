@@ -216,21 +216,6 @@ def get_mktsymbol_list():
 
 
 if __name__ == "__main__":
-    logging.debug('Stock updates loaded into database')
-    io = IndexObservations()
-    logging.debug('Index observations object created')
-    io.get_observation()
-    logging.debug('Index observations object updated')
-    io.write()
-    logging.debug('Index observations written to database')
-    i = Index()
-    logging.debug('Index object created')
-    i.update_price(io.df)
-    logging.debug('Index prices updated')
-    i.update_52_week_highlow()
-    i.write()
-
-    """ 
     logging.debug('Start WINDEX update script')
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     logging.debug('AlphaVantage API object created')
@@ -248,6 +233,25 @@ if __name__ == "__main__":
     s.calculate_mktcap()
     logging.debug('Calculated market capitalization')
     s.write()
+    """ 
+    logging.debug('Stock updates loaded into database')
+    io = IndexObservations()
+    logging.debug('Index observations object created')
+    io.get_observation()
+    logging.debug('Index observations object updated')
+    io.write()
+    logging.debug('Index observations written to database')
+    i = Index()
+    logging.debug('Index object created')
+    i.update_price(io.df)
+    logging.debug('Index prices updated')
+    i.update_52_week_highlow()
+    logging.debug('Index 52 weeks highlow calculated')
+    i.write()
+    logging.debug('Index information updated')
+
+
+
     
     test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),
                     ('TSX:BYD-UN', '2018-12-03 00:00:00', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
