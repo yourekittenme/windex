@@ -104,7 +104,7 @@ class Stock:
             stock.update_query(stmt)
 
 
-class Index:
+class IndexObservations:
 
     def __init__(self):
         tbl = 'stockindex_app_index'
@@ -112,7 +112,7 @@ class Index:
         stmt = select([index.table]).where(index.table.c.inactive == 0)
         self.df = index.select_query(stmt)
 
-    def update_price(self):
+    def get_observation(self):
         tbl = 'stockindex_app_stocksindexed'
         stocksindexed = SqlConnection(tbl)
         stmt = select([stocksindexed.table])
@@ -140,32 +140,19 @@ class Index:
         df_update.rename(columns={'market_cap': 'current_value', 'high_market_cap': 'high_value',
                                   'low_market_cap': 'low_value'}, inplace=True)
 
-        self.df['prior_close_value'] = self.df['current_value']
+        self.df['open_value'] = self.df['current_value']
         self.df.drop(['current_value', 'high_value', 'low_value'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_update, how='inner', left_on='id', right_on='index_id')
-        self.df['change_value'] = pd.to_numeric(self.df['current_value']) - pd.to_numeric(self.df['prior_close_value'])
-        self.df['change_value'] = self.df['change_value'].round(decimals=2)
+        self.df['observation_date'] = datetime.datetime.strptime(
+            (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime('%Y-%m-%d'), '%Y-%m-%d')
+        self.df.rename(columns={'id': 'index_id', 'current_value': 'close_value'}, inplace=True)
+        self.df = self.df[['observation_date', 'open_value', 'high_value', 'low_value', 'close_value', 'index_id']]
 
     def write(self):
-        tbl = 'stockindex_app_index'
-        index = SqlConnection(tbl)
-        values_list = [x for x in self.df.T.to_dict().values()]
-
-        for value in values_list:
-            stmt = update(index.table).values(
-                current_value=value['current_value'],
-                prior_close_value=value['prior_close_value'],
-                change_value=value['change_value'],
-                high_value=value['high_value'],
-                low_value=value['low_value'],
-            ).where(
-                index.table.c.id == value['id']
-            )
-            index.update_query(stmt)
-
-
-class IndexObservations:
-    pass
+        tbl = 'stockindex_app_indexobservations'
+        observation = SqlConnection(tbl)
+        stmt = insert(observation.table)
+        observation.insert_query(stmt, self.df)
 
 
 def get_mktsymbol_list():
@@ -196,12 +183,13 @@ if __name__ == "__main__":
     logging.debug('Calculated market capitalization')
     s.write()
     logging.debug('Stock updates loaded into database')
+    io = IndexObservations()
+    logging.debug('Index observations object created')
+    io.get_observation()
+    logging.debug('Index observations object updated')
+    io.write()
+    logging.debug('Index observations written to database')
     """ 
-
-    i = Index()
-    i.update_price()
-    i.write()
-
 
     
     test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),

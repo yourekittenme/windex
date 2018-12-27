@@ -882,3 +882,242 @@ max    9.000000      8.020000        9.883835e+08
 2018-12-27 10:56:51,773 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 None
 2018-12-27 10:56:54,843 - DEBUG - Calculated market capitalization
 2018-12-27 10:56:54,983 - DEBUG - Stock updates loaded into database
+2018-12-27 15:42:11,341 - DEBUG - Start WINDEX update script
+2018-12-27 15:42:11,401 - DEBUG - AlphaVantage API object created
+2018-12-27 15:42:11,401 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:42:12,381 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:42:24,446 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:42:24,966 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BYD-UN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:42:37,019 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:42:37,678 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:GWO&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:42:49,743 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:42:50,253 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:IGM&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:43:02,330 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:43:02,900 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:PBL&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:43:14,960 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:43:15,440 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NFI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:43:27,510 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:43:28,070 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NWC&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:43:40,133 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:43:40,783 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:EIF&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:43:52,843 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:43:53,343 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:AFN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:44:05,424 - DEBUG - Downloaded daily stock info from AlphaVantage
+2018-12-27 15:44:05,464 - DEBUG - FKs obtained from database
+2018-12-27 15:44:05,534 - DEBUG - Queried active stocks in database
+2018-12-27 15:44:05,544 - DEBUG - Updated prices of active stocks
+2018-12-27 15:44:05,604 - DEBUG - Calculated 52 week high & low stock prices
+2018-12-27 15:44:05,604 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:06,354 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BUI HTTP/1.1" 200 None
+2018-12-27 15:44:09,434 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:10,154 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BYD.UN HTTP/1.1" 200 None
+2018-12-27 15:44:13,230 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:13,920 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=GWO HTTP/1.1" 200 None
+2018-12-27 15:44:17,086 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:17,846 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=IGM HTTP/1.1" 200 None
+2018-12-27 15:44:20,919 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:21,459 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=PBL HTTP/1.1" 200 None
+2018-12-27 15:44:24,509 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:25,039 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NFI HTTP/1.1" 200 None
+2018-12-27 15:44:28,129 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:28,729 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NWC HTTP/1.1" 200 None
+2018-12-27 15:44:31,809 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:32,559 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=EIF HTTP/1.1" 200 None
+2018-12-27 15:44:35,652 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 15:44:36,272 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 None
+2018-12-27 15:44:39,362 - DEBUG - Calculated market capitalization
+2018-12-27 15:44:39,532 - DEBUG - Stock updates loaded into database
+2018-12-27 15:44:39,542 - DEBUG - Index observations object created
+2018-12-27 15:44:39,642 - DEBUG - Index observations object updated
+2018-12-27 15:58:18,227 - DEBUG - Start WINDEX update script
+2018-12-27 15:58:18,257 - DEBUG - AlphaVantage API object created
+2018-12-27 15:58:18,267 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:58:19,177 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:58:31,248 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:58:31,808 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BYD-UN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:58:43,878 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:58:44,508 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:GWO&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:58:56,582 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:58:57,132 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:IGM&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:59:09,192 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:59:09,682 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:PBL&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:59:21,752 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:59:22,272 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NFI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:59:34,347 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:59:34,857 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NWC&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:59:46,917 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 15:59:47,477 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:EIF&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 15:59:59,537 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:00:03,197 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:AFN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:00:15,271 - DEBUG - Downloaded daily stock info from AlphaVantage
+2018-12-27 16:00:15,311 - DEBUG - FKs obtained from database
+2018-12-27 16:00:15,361 - DEBUG - Queried active stocks in database
+2018-12-27 16:00:15,371 - DEBUG - Updated prices of active stocks
+2018-12-27 16:00:15,401 - DEBUG - Calculated 52 week high & low stock prices
+2018-12-27 16:00:15,411 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:16,201 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BUI HTTP/1.1" 200 None
+2018-12-27 16:00:19,271 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:20,051 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BYD.UN HTTP/1.1" 200 None
+2018-12-27 16:00:23,121 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:23,621 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=GWO HTTP/1.1" 200 None
+2018-12-27 16:00:26,731 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:27,531 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=IGM HTTP/1.1" 200 None
+2018-12-27 16:00:30,616 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:31,286 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=PBL HTTP/1.1" 200 None
+2018-12-27 16:00:34,366 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:35,356 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NFI HTTP/1.1" 200 None
+2018-12-27 16:00:38,426 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:38,946 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NWC HTTP/1.1" 200 None
+2018-12-27 16:00:42,016 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:42,616 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=EIF HTTP/1.1" 200 None
+2018-12-27 16:00:45,714 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:00:46,354 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 None
+2018-12-27 16:00:49,454 - DEBUG - Calculated market capitalization
+2018-12-27 16:00:49,584 - DEBUG - Stock updates loaded into database
+2018-12-27 16:00:49,594 - DEBUG - Index observations object created
+2018-12-27 16:00:49,654 - DEBUG - Index observations object updated
+2018-12-27 16:20:50,536 - DEBUG - Start WINDEX update script
+2018-12-27 16:20:50,566 - DEBUG - AlphaVantage API object created
+2018-12-27 16:20:50,576 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:20:51,456 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:21:03,511 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:21:04,072 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BYD-UN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:21:16,135 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:21:16,688 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:GWO&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:21:28,760 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:21:29,339 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:IGM&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:21:41,415 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:21:41,960 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:PBL&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:21:54,030 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:21:54,537 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NFI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:22:06,608 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:22:07,228 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NWC&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:22:19,296 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:22:19,831 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:EIF&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:22:31,907 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:22:32,438 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:AFN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:22:44,504 - DEBUG - Downloaded daily stock info from AlphaVantage
+2018-12-27 16:22:44,536 - DEBUG - FKs obtained from database
+2018-12-27 16:22:44,609 - DEBUG - Queried active stocks in database
+2018-12-27 16:22:44,621 - DEBUG - Updated prices of active stocks
+2018-12-27 16:22:44,658 - DEBUG - Calculated 52 week high & low stock prices
+2018-12-27 16:22:44,661 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:22:45,244 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BUI HTTP/1.1" 200 None
+2018-12-27 16:22:48,300 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:22:48,846 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BYD.UN HTTP/1.1" 200 None
+2018-12-27 16:22:51,919 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:22:52,527 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=GWO HTTP/1.1" 200 None
+2018-12-27 16:22:55,605 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:22:56,539 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=IGM HTTP/1.1" 200 None
+2018-12-27 16:22:59,609 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:22:59,996 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=PBL HTTP/1.1" 200 None
+2018-12-27 16:23:03,141 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:23:03,748 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NFI HTTP/1.1" 200 None
+2018-12-27 16:23:06,886 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:23:07,282 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NWC HTTP/1.1" 200 None
+2018-12-27 16:23:10,369 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:23:11,022 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=EIF HTTP/1.1" 200 None
+2018-12-27 16:23:14,074 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:23:15,001 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 None
+2018-12-27 16:23:18,085 - DEBUG - Calculated market capitalization
+2018-12-27 16:23:18,218 - DEBUG - Stock updates loaded into database
+2018-12-27 16:23:18,229 - DEBUG - Index observations object created
+2018-12-27 16:23:18,303 - DEBUG - Index observations object updated
+2018-12-27 16:25:07,814 - DEBUG - Start WINDEX update script
+2018-12-27 16:25:07,844 - DEBUG - AlphaVantage API object created
+2018-12-27 16:25:07,844 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:25:08,835 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:25:20,891 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:25:21,377 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BYD-UN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:25:33,445 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:25:33,937 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:GWO&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:25:46,005 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:25:46,573 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:IGM&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:25:58,644 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:25:59,173 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:PBL&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:26:11,236 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:26:11,782 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NFI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:26:23,849 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:26:24,379 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NWC&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:26:36,444 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:26:37,019 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:EIF&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:26:49,084 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:26:49,634 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:AFN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:27:01,705 - DEBUG - Downloaded daily stock info from AlphaVantage
+2018-12-27 16:27:01,739 - DEBUG - FKs obtained from database
+2018-12-27 16:27:01,817 - DEBUG - Queried active stocks in database
+2018-12-27 16:27:01,839 - DEBUG - Updated prices of active stocks
+2018-12-27 16:27:01,912 - DEBUG - Calculated 52 week high & low stock prices
+2018-12-27 16:27:01,915 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:02,670 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BUI HTTP/1.1" 200 None
+2018-12-27 16:27:05,753 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:06,601 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BYD.UN HTTP/1.1" 200 14156
+2018-12-27 16:27:09,694 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:10,156 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=GWO HTTP/1.1" 200 14313
+2018-12-27 16:27:13,264 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:13,977 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=IGM HTTP/1.1" 200 14281
+2018-12-27 16:27:17,040 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:17,766 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=PBL HTTP/1.1" 200 14189
+2018-12-27 16:27:20,870 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:21,702 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NFI HTTP/1.1" 200 14040
+2018-12-27 16:27:24,756 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:25,348 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NWC HTTP/1.1" 200 13965
+2018-12-27 16:27:28,413 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:28,975 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=EIF HTTP/1.1" 200 13727
+2018-12-27 16:27:32,034 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:27:32,900 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 14064
+2018-12-27 16:27:35,969 - DEBUG - Calculated market capitalization
+2018-12-27 16:27:36,170 - DEBUG - Stock updates loaded into database
+2018-12-27 16:27:36,185 - DEBUG - Index observations object created
+2018-12-27 16:32:00,386 - DEBUG - Start WINDEX update script
+2018-12-27 16:32:00,416 - DEBUG - AlphaVantage API object created
+2018-12-27 16:32:00,426 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:32:01,395 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:32:13,475 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:32:13,987 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BYD-UN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:32:26,046 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:32:26,559 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:GWO&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:32:38,618 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:32:39,151 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:IGM&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:32:51,222 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:32:51,762 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:PBL&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:33:03,825 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:33:04,437 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NFI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:33:16,505 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:33:17,101 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:NWC&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:33:29,179 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:33:29,679 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:EIF&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:33:41,746 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:33:42,271 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:AFN&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
+2018-12-27 16:33:54,350 - DEBUG - Downloaded daily stock info from AlphaVantage
+2018-12-27 16:33:54,380 - DEBUG - FKs obtained from database
+2018-12-27 16:33:54,440 - DEBUG - Queried active stocks in database
+2018-12-27 16:33:54,450 - DEBUG - Updated prices of active stocks
+2018-12-27 16:33:54,480 - DEBUG - Calculated 52 week high & low stock prices
+2018-12-27 16:33:54,480 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:33:54,991 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BUI HTTP/1.1" 200 14033
+2018-12-27 16:33:58,053 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:33:58,824 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=BYD.UN HTTP/1.1" 200 14156
+2018-12-27 16:34:01,902 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:02,445 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=GWO HTTP/1.1" 200 14313
+2018-12-27 16:34:05,521 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:06,430 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=IGM HTTP/1.1" 200 14281
+2018-12-27 16:34:09,499 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:10,221 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=PBL HTTP/1.1" 200 14189
+2018-12-27 16:34:13,354 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:13,986 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NFI HTTP/1.1" 200 14039
+2018-12-27 16:34:17,054 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:17,474 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=NWC HTTP/1.1" 200 13964
+2018-12-27 16:34:20,549 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:21,405 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=EIF HTTP/1.1" 200 13727
+2018-12-27 16:34:24,502 - DEBUG - Starting new HTTPS connection (1): web.tmxmoney.com:443
+2018-12-27 16:34:25,360 - DEBUG - https://web.tmxmoney.com:443 "GET /quote.php?qm_symbol=AFN HTTP/1.1" 200 14065
+2018-12-27 16:34:28,456 - DEBUG - Calculated market capitalization
+2018-12-27 16:34:28,636 - DEBUG - Stock updates loaded into database
+2018-12-27 16:34:28,656 - DEBUG - Index observations object created
+2018-12-27 16:34:28,736 - DEBUG - Index observations object updated
+2018-12-27 16:34:28,766 - DEBUG - Index observations written to database
+2018-12-27 16:36:28,172 - DEBUG - Start WINDEX update script
+2018-12-27 16:36:28,204 - DEBUG - AlphaVantage API object created
+2018-12-27 16:36:28,204 - DEBUG - Starting new HTTPS connection (1): www.alphavantage.co:443
+2018-12-27 16:36:29,195 - DEBUG - https://www.alphavantage.co:443 "GET /query?function=TIME_SERIES_DAILY&symbol=TSX:BUI&outputsize=compact&apikey=VWXATT8K62KW1GZH HTTP/1.1" 200 None
