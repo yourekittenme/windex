@@ -28,7 +28,7 @@ class AlphaVantage:
 
         return stock_observation_list
 
-    def prior_day(self, lookup_symbol, days_ago=6):
+    def prior_day(self, lookup_symbol, days_ago=14):
         api_function = 'TIME_SERIES_DAILY'
 
         # define where the previous day stock closing price will be found in the json from Alpha Vantage's API

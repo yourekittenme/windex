@@ -2,6 +2,44 @@ from django.db import models
 from django.urls import reverse
 
 
+class Index(models.Model):
+    """An indicator of stock market performance based on information about selected stocks"""
+    name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=10)
+    current_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    prior_close_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    change_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    high_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    low_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    high_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    low_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    inactive = models.BooleanField(default=False)
+
+    def __str__(self):
+        return ''.join([self.short_name, ' ', self.name])
+
+
+class IndexObservations(models.Model):
+    """Daily statistics about how an index is trading"""
+    index = models.ForeignKey('Index', on_delete=models.CASCADE)
+    observation_date = models.DateTimeField(null=True)
+    open_value = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    high_value = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    low_value = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+    close_value = models.DecimalField(decimal_places=2, max_digits=20, null=True)
+
+
+class Observations(models.Model):
+    """Daily statistics about how a stock is trading"""
+    stock = models.ForeignKey('Stock', on_delete=models.CASCADE)
+    observation_date = models.DateTimeField(null=True)
+    volume = models.IntegerField(null=True)
+    open_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    high_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    low_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    close_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+
+
 class Stock(models.Model):
     """A single publicly traded stock"""
     market = models.CharField(max_length=10)
@@ -24,34 +62,6 @@ class Stock(models.Model):
 
     def __str__(self):
         return self.symbol
-
-
-class Observations(models.Model):
-    """Daily statistics about how a stock is trading"""
-    stock = models.ForeignKey('Stock', on_delete=models.CASCADE)
-    observation_date = models.DateTimeField(null=True)
-    volume = models.IntegerField(null=True)
-    open_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    high_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    low_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    close_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-
-
-class Index(models.Model):
-    """An indicator of stock market performance based on information about selected stocks"""
-    name = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=10)
-    current_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    prior_close_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    change_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    high_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    low_value = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    high_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    low_price_52_weeks = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    inactive = models.BooleanField(default=False)
-
-    def __str__(self):
-        return ''.join([self.short_name, ' ', self.name])
 
 
 class StocksIndexed(models.Model):

@@ -1,4 +1,5 @@
 from AlphaVantage import AlphaVantage
+import datetime
 from SqlQuery import SqlConnection
 from sqlalchemy import select, insert, func, update
 from TmxMoney import TmxMoney
@@ -58,6 +59,7 @@ class Stock:
         highest_price = func.max(observation.table.c.high_price).label('high_price_52_weeks')
         lowest_price = func.min(observation.table.c.low_price).label('low_price_52_weeks')
         stmt = select([observation.table.c.stock_id, highest_price, lowest_price])
+        stmt = stmt.where(observation.table.c.observation_date >= datetime.datetime.now()+datetime.timedelta(weeks=-52))
         stmt = stmt.group_by(observation.table.c.stock_id)
         df_highlow = observation.select_query(stmt)
 
@@ -117,7 +119,7 @@ class Index:
         df_stocksindexed = stocksindexed.select_query(stmt)
 
         df_update = pd.merge(self.df, df_stocksindexed, how='inner', left_on='id', right_on='index_id')
-        df_update = df_update[['index_id','stock_id']]
+        df_update = df_update[['index_id', 'stock_id']]
 
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
@@ -139,12 +141,10 @@ class Index:
                                   'low_market_cap': 'low_value'}, inplace=True)
 
         self.df['prior_close_value'] = self.df['current_value']
-        print(self.df.to_string())
         self.df.drop(['current_value', 'high_value', 'low_value'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_update, how='inner', left_on='id', right_on='index_id')
         self.df['change_value'] = pd.to_numeric(self.df['current_value']) - pd.to_numeric(self.df['prior_close_value'])
         self.df['change_value'] = self.df['change_value'].round(decimals=2)
-        print(self.df.to_string())
 
     def write(self):
         tbl = 'stockindex_app_index'
@@ -164,6 +164,10 @@ class Index:
             index.update_query(stmt)
 
 
+class IndexObservations:
+    pass
+
+
 def get_mktsymbol_list():
     tbl = 'stockindex_app_stock'
     stock = SqlConnection(tbl)
@@ -174,13 +178,6 @@ def get_mktsymbol_list():
 
 
 if __name__ == "__main__":
-    i = Index()
-    i.update_price()
-    i.write()
-
-    """  
-    
-    
     logging.debug('Start WINDEX update script')
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     logging.debug('AlphaVantage API object created')
@@ -189,7 +186,6 @@ if __name__ == "__main__":
     o.get_stock_fk()
     logging.debug('FKs obtained from database')
     o.write()
-    logging.debug('Observations inserted into database')
     s = Stock()
     logging.debug('Queried active stocks in database')
     s.update_price(o.df)
@@ -200,6 +196,11 @@ if __name__ == "__main__":
     logging.debug('Calculated market capitalization')
     s.write()
     logging.debug('Stock updates loaded into database')
+    """ 
+
+    i = Index()
+    i.update_price()
+    i.write()
 
 
     
