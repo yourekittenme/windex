@@ -155,6 +155,57 @@ class IndexObservations:
         observation.insert_query(stmt, self.df)
 
 
+class Index:
+
+    def __init__(self):
+        tbl = 'stockindex_app_index'
+        index = SqlConnection(tbl)
+        stmt = select([index.table]).where(index.table.c.inactive == 0)
+        self.df = index.select_query(stmt)
+
+    def update_price(self, df_index_obs):
+        self.df['prior_close_value'] = self.df['current_value']
+        self.df.drop(['current_value', 'high_value', 'low_value'], axis=1, inplace=True)
+        self.df = pd.merge(self.df, df_index_obs, how='inner', left_on='id', right_on='index_id')
+        self.df['change_value'] = pd.to_numeric(self.df['close_value']) - pd.to_numeric(self.df['prior_close_value'])
+        self.df['change_value'] = self.df['change_value'].round(decimals=2)
+        self.df.rename(columns={'close_value': 'current_value'})
+        self.df.drop(['open_value'], axis=1, inplace=True)
+
+    def update_52_week_highlow(self):
+        tbl = 'stockindex_app_indexobservations'
+        index_obs = SqlConnection(tbl)
+        highest_value = func.max(index_obs.table.c.high_value).label('high_value_52_weeks')
+        lowest_value = func.min(index_obs.table.c.low_value).label('low_value_52_weeks')
+        stmt = select([index_obs.table.c.index_id, highest_value, lowest_value])
+        stmt = stmt.where(index_obs.table.c.observation_date >= datetime.datetime.now()+datetime.timedelta(weeks=-52))
+        df_index_obs = index_obs.select_query(stmt)
+        self.df.drop(['high_value_52_weeks', 'low_value_52_weeks'], axis=1, inplace=True)
+        self.df = pd.merge(self.df, df_index_obs, how='inner', left_on='id', right_on='index_id')
+        self.df.rename(columns={'close_value': 'current_value'}, inplace=True)
+        self.df = self.df[['id', 'current_value', 'prior_close_value', 'change_value', 'high_value', 'low_value',
+                           'high_value_52_weeks', 'low_value_52_weeks']]
+
+    def write(self):
+        tbl = 'stockindex_app_index'
+        index = SqlConnection(tbl)
+        values_list = [x for x in self.df.T.to_dict().values()]
+
+        for value in values_list:
+            stmt = update(index.table).values(
+                current_value=value['current_value'],
+                prior_close_value=value['prior_close_value'],
+                change_value=value['change_value'],
+                high_value=value['high_value'],
+                low_value=value['low_value'],
+                high_value_52_weeks=value['high_value_52_weeks'],
+                low_value_52_weeks=value['low_value_52_weeks'],
+            ).where(
+                index.table.c.id == value['id']
+            )
+            index.update_query(stmt)
+
+
 def get_mktsymbol_list():
     tbl = 'stockindex_app_stock'
     stock = SqlConnection(tbl)
@@ -165,6 +216,21 @@ def get_mktsymbol_list():
 
 
 if __name__ == "__main__":
+    logging.debug('Stock updates loaded into database')
+    io = IndexObservations()
+    logging.debug('Index observations object created')
+    io.get_observation()
+    logging.debug('Index observations object updated')
+    io.write()
+    logging.debug('Index observations written to database')
+    i = Index()
+    logging.debug('Index object created')
+    i.update_price(io.df)
+    logging.debug('Index prices updated')
+    i.update_52_week_highlow()
+    i.write()
+
+    """ 
     logging.debug('Start WINDEX update script')
     a = AlphaVantage(get_mktsymbol_list(), 'prior', 'VWXATT8K62KW1GZH')
     logging.debug('AlphaVantage API object created')
@@ -182,15 +248,6 @@ if __name__ == "__main__":
     s.calculate_mktcap()
     logging.debug('Calculated market capitalization')
     s.write()
-    logging.debug('Stock updates loaded into database')
-    io = IndexObservations()
-    logging.debug('Index observations object created')
-    io.get_observation()
-    logging.debug('Index observations object updated')
-    io.write()
-    logging.debug('Index observations written to database')
-    """ 
-
     
     test_records = [('TSX:BUI', '2018-12-03 00:00:00', 0, 3.6900, 3.6900, 3.6900, 3.6900),
                     ('TSX:BYD-UN', '2018-12-03 00:00:00', 83073, 115.9700, 121.2100, 114.1700, 118.7800),
