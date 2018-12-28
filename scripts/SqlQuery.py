@@ -44,7 +44,6 @@ class SqlConnection:
 if __name__ == '__main__':
     s = SqlConnection('stockindex_app_stock')
     q = select([s.table])
-    print(s.select_query(q, output='df').to_string())
 
     test_records_update = [(1, 'BUI', 'Buhler Industries',   3.69,  0, 0, 9.22500000e+07, 'TSX', 'TSX:BUI', '',
                             3.69,  3.69,  3.69, 3.94, 3.53, 25000000),

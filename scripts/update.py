@@ -1,24 +1,29 @@
+# custom packages
 from AlphaVantage import AlphaVantage
-import datetime
 from SqlQuery import SqlConnection
-from sqlalchemy import select, insert, func, update
 from TmxMoney import TmxMoney
-import pandas as pd
 
+# python packages
+import datetime
+import pandas as pd
+from sqlalchemy import select, insert, func, update
+
+# init logging
 import logging
 logging.basicConfig(filename='log.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class Observation:
-
-    columns_list = ['marketsymbol', 'observation_date', 'volume', 'open_price',
-                    'high_price', 'low_price', 'close_price']
+    """Daily statistics about how a stock is trading"""
 
     def __init__(self, obs_records):
+        columns_list = ['marketsymbol', 'observation_date', 'volume', 'open_price',
+                        'high_price', 'low_price', 'close_price']
         self.df = pd.DataFrame.from_records(obs_records, columns=self.columns_list)
         self.df['observation_date'] = pd.to_datetime(self.df['observation_date'], format='%Y-%m-%d %H:%M:%S')
 
     def get_stock_fk(self):
+        """get the foreign keys for each symbol in the observations DataFrame"""
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
         stmt = select([stock.table.c.marketsymbol, stock.table.c.id]).where(stock.table.c.inactive == 0)
@@ -29,6 +34,7 @@ class Observation:
         self.df.rename(columns={'id': 'stock_id'}, inplace=True)
 
     def write(self):
+        """insert new observations into the SQL database"""
         tbl = 'stockindex_app_observations'
         observation = SqlConnection(tbl)
         stmt = insert(observation.table)
@@ -36,7 +42,7 @@ class Observation:
 
 
 class Stock:
-
+    """A single publicly traded stock"""
     def __init__(self):
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
@@ -44,6 +50,7 @@ class Stock:
         self.df = stock.select_query(stmt)
 
     def update_price(self, df_obs):
+        """update the current, prior, high, low and change price of a stock"""
         self.df['prior_close_price'] = self.df['current_price']
         self.df.drop(['current_price', 'high_price', 'low_price'], axis=1, inplace=True)
         df_obs = df_obs[['stock_id', 'close_price', 'high_price', 'low_price']]
@@ -54,6 +61,7 @@ class Stock:
         self.df.drop('stock_id', axis=1, inplace=True)
 
     def update_52_week_highlow(self):
+        """compute the 52 week high/low price of a stock"""
         tbl = 'stockindex_app_observations'
         observation = SqlConnection(tbl)
         highest_price = func.max(observation.table.c.high_price).label('high_price_52_weeks')
@@ -68,6 +76,7 @@ class Stock:
         self.df.drop('stock_id', axis=1, inplace=True)
 
     def calculate_mktcap(self):
+        """find the market capitalization of a stock: shares outstanding * stock price"""
         shares_out_list = [x.replace('-', '.') for x in self.df['symbol'].tolist()]
         tmx = TmxMoney(shares_out_list)
         df_shares_out = tmx.get_shares_outstanding()
@@ -81,6 +90,7 @@ class Stock:
             (pd.to_numeric(self.df['low_price']) * pd.to_numeric(self.df['shares_outstanding'])).astype('int64')
 
     def write(self):
+        """update the stock information in the SQL database"""
         tbl = 'stockindex_app_stock'
         stock = SqlConnection(tbl)
         values_list = [x for x in self.df.T.to_dict().values()]
@@ -105,6 +115,7 @@ class Stock:
 
 
 class IndexObservations:
+    """Daily statistics about how an index is trading"""
 
     def __init__(self):
         tbl = 'stockindex_app_index'
@@ -113,6 +124,7 @@ class IndexObservations:
         self.df = index.select_query(stmt)
 
     def get_observation(self):
+        """update the current, prior, high, low and change value of the index"""
         tbl = 'stockindex_app_stocksindexed'
         stocksindexed = SqlConnection(tbl)
         stmt = select([stocksindexed.table])
@@ -149,6 +161,7 @@ class IndexObservations:
         self.df = self.df[['observation_date', 'open_value', 'high_value', 'low_value', 'close_value', 'index_id']]
 
     def write(self):
+        """insert index observations into the SQL database"""
         tbl = 'stockindex_app_indexobservations'
         observation = SqlConnection(tbl)
         stmt = insert(observation.table)
@@ -156,6 +169,7 @@ class IndexObservations:
 
 
 class Index:
+    """An indicator of stock market performance based on information about selected stocks"""
 
     def __init__(self):
         tbl = 'stockindex_app_index'
@@ -164,6 +178,7 @@ class Index:
         self.df = index.select_query(stmt)
 
     def update_price(self, df_index_obs):
+        """update the current, prior, high, low and change value of the index"""
         self.df['prior_close_value'] = self.df['current_value']
         self.df.drop(['current_value', 'high_value', 'low_value'], axis=1, inplace=True)
         self.df = pd.merge(self.df, df_index_obs, how='inner', left_on='id', right_on='index_id')
@@ -173,6 +188,7 @@ class Index:
         self.df.drop(['open_value'], axis=1, inplace=True)
 
     def update_52_week_highlow(self):
+        """compute the 52 week high/low value of an index"""
         tbl = 'stockindex_app_indexobservations'
         index_obs = SqlConnection(tbl)
         highest_value = func.max(index_obs.table.c.high_value).label('high_value_52_weeks')
@@ -187,6 +203,7 @@ class Index:
                            'high_value_52_weeks', 'low_value_52_weeks']]
 
     def write(self):
+        """update the index information in the SQL database"""
         tbl = 'stockindex_app_index'
         index = SqlConnection(tbl)
         values_list = [x for x in self.df.T.to_dict().values()]
@@ -207,6 +224,7 @@ class Index:
 
 
 def get_mktsymbol_list():
+    """get a list of symbols to lookup on AlphaVantage"""
     tbl = 'stockindex_app_stock'
     stock = SqlConnection(tbl)
     stmt = select([stock.table.c.marketsymbol]).where(stock.table.c.inactive == 0)
@@ -233,7 +251,10 @@ if __name__ == "__main__":
     s.calculate_mktcap()
     logging.debug('Calculated market capitalization')
     s.write()
+<<<<<<< HEAD
     """ 
+=======
+>>>>>>> 215fc6b8d2e408ae60cc340701966c33c5b47126
     logging.debug('Stock updates loaded into database')
     io = IndexObservations()
     logging.debug('Index observations object created')
@@ -246,6 +267,7 @@ if __name__ == "__main__":
     i.update_price(io.df)
     logging.debug('Index prices updated')
     i.update_52_week_highlow()
+<<<<<<< HEAD
     logging.debug('Index 52 weeks highlow calculated')
     i.write()
     logging.debug('Index information updated')
@@ -282,3 +304,6 @@ if __name__ == "__main__":
                      (9, 'AFN', 'Ag Growth International',  50,  3.63, 0, 9.84849521e+08, 'TSX', 'TSX:AFN', '',
                       53.63,  54.44,  54.44, 64.72,  47.84,  18363780)]
 """
+=======
+    i.write()
+>>>>>>> 215fc6b8d2e408ae60cc340701966c33c5b47126
